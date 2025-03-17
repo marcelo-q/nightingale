@@ -7,7 +7,7 @@ import { last, RangeCollection, Refresher } from "./utils/utils";
 
 
 type Fragment = FeatureLocation["fragments"][number]
-type ExtendedFragment = Fragment & { featureIndex: number };
+type ExtendedFragment = Fragment & { featureIndex: number, color?: string };
 
 
 @customElementOnce("nightingale-track-canvas")
@@ -146,8 +146,13 @@ export default class NightingaleTrackCanvas extends NightingaleTrack {
       const width = fragmentLength * baseWidth;
       const y = scale * (this.layoutObj?.getFeatureYPos(this.data[iFeature]) ?? 0);
       const shape = this.getShape(this.data[iFeature]);
-      ctx.fillStyle = this.getFeatureFillColor(this.data[iFeature]);
-      ctx.strokeStyle = this.getFeatureColor(this.data[iFeature]);
+
+      // fix so color can be taken by fragment
+      const fillColor = fragment.color! ?? this.getFeatureFillColor(this.data[iFeature]);
+      const strokeColor = fragment.color! ?? this.getFeatureColor(this.data[iFeature]);
+
+      ctx.fillStyle = fillColor
+      ctx.strokeStyle = strokeColor
       ctx.globalAlpha = (this.data[iFeature].opacity ?? 0.9);
 
       const rangeDrawn = drawRange(ctx, shape, x, y, width, height, optXPadding, fragmentLength);
